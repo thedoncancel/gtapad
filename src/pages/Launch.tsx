@@ -70,7 +70,6 @@ export default function Launch() {
     !item && "Pick an item",
     !name.trim() && "Name it",
     !/^[A-Z0-9]{2,10}$/.test(symbol) && "Ticker: 2–10 letters or digits",
-    !logo && "Add a logo",
     buyAmt < 0 && "Dev buy can't be negative",
     pairBal != null && buyAmt > pairBal && `Not enough ${PAIR.symbol}`,
   ].filter(Boolean) as string[];
@@ -85,16 +84,31 @@ export default function Launch() {
     r.readAsDataURL(f);
   }
 
+  /** The item's picture cropped square (upper part, where faces and cars sit), as the coin logo. */
+  async function itemLogo(id: string): Promise<string> {
+    const img = new Image();
+    img.src = `/img/items/${id}.jpg`;
+    await img.decode();
+    const side = Math.min(img.naturalWidth, img.naturalHeight);
+    const sx = (img.naturalWidth - side) / 2;
+    const sy = (img.naturalHeight - side) * 0.35;
+    const c = document.createElement("canvas");
+    c.width = c.height = side;
+    c.getContext("2d")!.drawImage(img, sx, sy, side, side, 0, 0, side, side);
+    return c.toDataURL("image/jpeg", 0.9);
+  }
+
   async function go() {
     if (!publicKey || !signTransaction) return setVisible(true);
     if (problems.length || !item) return;
     setErr(null);
     try {
       setStage("upload");
+      const image = logo ?? (await itemLogo(item.id));
       const up = await fetch("/api/upload", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ image: logo, name: name.trim(), symbol, description: desc, item: item.id, x, telegram: tg, website: web }),
+        body: JSON.stringify({ image, name: name.trim(), symbol, description: desc, item: item.id, x, telegram: tg, website: web }),
       });
       const uj = await up.json();
       if (!up.ok) throw new Error(uj.error || "Upload failed.");
@@ -155,7 +169,7 @@ export default function Launch() {
             </div>
             <label>Description<textarea value={desc} maxLength={500} rows={3} onChange={(e) => setDesc(e.target.value)} placeholder={item?.line ?? "What's the story?"} /></label>
             <label className="file">
-              Logo (PNG, JPG, WEBP or GIF, up to 1 MB)
+              Logo (optional: uses the item's picture unless you upload your own; PNG, JPG, WEBP or GIF, up to 1 MB)
               <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={(e) => onLogo(e.target.files?.[0])} />
             </label>
             <div className="row3">
@@ -185,7 +199,7 @@ export default function Launch() {
         <aside className="launch__preview">
           <div className="preview-card">
             {item ? <ItemArt item={item} size="lg" /> : <div className="item-art item-art--lg placeholder">Pick an item</div>}
-            {logo && <img className="preview-card__logo" src={logo} alt="" />}
+            {logo ? <img className="preview-card__logo" src={logo} alt="" /> : item && <img className="preview-card__logo" src={`/img/items/${item.id}.jpg`} alt="" />}
             <div className="preview-card__body">
               <div className="coin-card__top">
                 <strong>{name || "Your coin"}</strong>
