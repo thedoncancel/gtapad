@@ -441,3 +441,10 @@ textarea { resize: vertical; }
 #privy-dialog h1, #privy-dialog h2, #privy-dialog h3, #privy-dialog label, #privy-dialog .link, #privy-dialog button, #privy-dialog input,
 .wallet-adapter-modal h1, .wallet-adapter-modal-title { font-family: var(--body) !important; line-height: 1.3; }
 .wallet-adapter-modal-title { font-size: 1.25rem !important; font-weight: 600 !important; }
+
+/* one coin per item */
+.picker__item { position: relative; }
+.picker__item.is-taken { opacity: 0.38; cursor: not-allowed; }
+.picker__taken { position: absolute; top: 6px; left: 6px; font-style: normal; font-family: var(--mono, "Chakra Petch"), sans-serif; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; background: var(--pink, #ff2e88); color: #09070a; padding: 2px 6px; border-radius: 4px; }
+.launch__taken { margin: 0; padding: 12px 14px; border: 1px solid var(--pink, #ff2e88); border-radius: 10px; font-size: 0.9rem; }
+.launch__taken a { color: var(--pink, #ff2e88); }

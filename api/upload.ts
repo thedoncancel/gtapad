@@ -3,7 +3,7 @@ import { put } from "@vercel/blob";
 import { randomUUID } from "node:crypto";
 import { itemById } from "../shared/catalog.js";
 import { BRAND } from "../shared/config.js";
-import { json } from "./_lib.js";
+import { itemHolder, json } from "./_lib.js";
 
 export const config = { api: { bodyParser: { sizeLimit: "2mb" } } };
 
@@ -27,6 +27,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const m = /^data:([a-z/]+);base64,(.+)$/.exec(typeof b.image === "string" ? b.image : "");
   if (!name || !symbol || !item) return json(res, 400, { error: "Name, ticker and item are required." });
   if (!m || !TYPES[m[1]]) return json(res, 400, { error: "Logo must be PNG, JPG, WEBP or GIF." });
+  // One coin per item: stop before the user pays for a launch that can't be listed.
+  const holder = await itemHolder(item.id);
+  if (holder) return json(res, 409, { error: `${item.name} is already taken. Pick another item.`, holder });
   const bytes = Buffer.from(m[2], "base64");
   if (bytes.length > 1_000_000) return json(res, 400, { error: "Logo must be under 1 MB." });
 

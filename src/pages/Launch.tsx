@@ -8,6 +8,7 @@ import { ItemArt } from "../components/ItemArt";
 import { Passed } from "../components/Passed";
 import { balance, launchCoin } from "../lib/chain";
 import { num } from "../lib/format";
+import { useLaunches } from "../data/launches";
 
 type Stage = "idle" | "upload" | "sign" | "confirm" | "register";
 const STAGE_TEXT: Record<Stage, string> = {
@@ -18,11 +19,13 @@ const STAGE_TEXT: Record<Stage, string> = {
   register: "Putting it on the map…",
 };
 
-export async function register(mint: string) {
+/** Lists the coin. Returns true when listed, or the server's reason when it refused (item already taken). */
+export async function register(mint: string): Promise<true | string | false> {
   for (let i = 0; i < 6; i++) {
     try {
       const r = await fetch("/api/register", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ mint }) });
       if (r.ok) return true;
+      if (r.status === 409) return String((await r.json().catch(() => ({})))?.error ?? "This item is already taken.");
     } catch {}
     await new Promise((res) => setTimeout(res, 1500 * (i + 1)));
   }
@@ -53,6 +56,11 @@ export default function Launch() {
   const [err, setErr] = useState<string | null>(null);
   const [done, setDone] = useState<string | null>(null);
 
+  // One coin per item: items that already have a coin can't be picked again.
+  const { data: live } = useLaunches();
+  const taken = useMemo(() => new Map((live?.launches ?? []).map((l) => [l.item, l.mint] as const)), [live]);
+  const takenBy = itemId ? taken.get(itemId) : undefined;
+
   const item = itemById(itemId);
   const items = useMemo(() => (cat === "all" ? ITEMS : ITEMS.filter((i) => i.cat === cat)), [cat]);
 
@@ -68,6 +76,7 @@ export default function Launch() {
   const buyAmt = Number(devBuy) || 0;
   const problems = [
     !item && "Pick an item",
+    !!takenBy && `${item?.name ?? "This item"} is already taken`,
     !name.trim() && "Name it",
     !/^[A-Z0-9]{2,10}$/.test(symbol) && "Ticker: 2–10 letters or digits",
     buyAmt < 0 && "Dev buy can't be negative",
@@ -123,7 +132,8 @@ export default function Launch() {
         name: name.trim(), symbol, uri: uj.uri, devBuy: buyAmt,
       });
       setStage("register");
-      await register(mint);
+      const listed = await register(mint);
+      if (typeof listed === "string") throw new Error(`${listed} Someone launched it just before you, so your coin is live on pump.fun but not listed here.`);
       setDone(mint);
     } catch (e: any) {
       const m = String(e?.message ?? e);
@@ -153,13 +163,27 @@ export default function Launch() {
             </div>
             <div className="picker">
               {items.map((it) => (
-                <button key={it.id} className={`picker__item ${it.id === itemId ? "on" : ""}`} onClick={() => setItemId(it.id)} type="button">
+                <button
+                  key={it.id}
+                  className={`picker__item ${it.id === itemId ? "on" : ""} ${taken.has(it.id) ? "is-taken" : ""}`}
+                  onClick={() => !taken.has(it.id) && setItemId(it.id)}
+                  disabled={taken.has(it.id)}
+                  title={taken.has(it.id) ? "Already has a coin" : undefined}
+                  type="button"
+                >
                   <ItemArt item={it} size="sm" />
                   <span>{it.name}</span>
+                  {taken.has(it.id) && <em className="picker__taken">Taken</em>}
                 </button>
               ))}
             </div>
           </fieldset>
+
+          {takenBy && item && (
+            <p className="launch__taken">
+              {item.name} already has a coin. One coin per item: <Link to={`/coin/${takenBy}`}>trade it</Link> or pick another.
+            </p>
+          )}
 
           <fieldset>
             <legend><span>2</span> Brand it</legend>

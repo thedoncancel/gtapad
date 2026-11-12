@@ -3,7 +3,7 @@ import { PublicKey } from "@solana/web3.js";
 import { getTokenMetadata, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import { itemById } from "../shared/catalog.js";
 import { PAIR, type LaunchRecord } from "../shared/config.js";
-import { conn, json, pump, saveRecord } from "./_lib.js";
+import { claimItem, conn, json, pump, saveRecord } from "./_lib.js";
 
 const BLOB_HOST = /^https:\/\/[a-z0-9]+\.public\.blob\.vercel-storage\.com\/meta\//;
 
@@ -31,6 +31,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const meta = (await (await fetch(md.uri)).json()) as Record<string, any>;
     const item = itemById(meta?.gtapad?.item);
     if (!item) return json(res, 400, { error: "No catalog item on this coin." });
+
+    // One coin per item: the first coin to register takes it, later ones aren't listed.
+    const holder = await claimItem(item.id, mint.toBase58());
+    if (holder !== mint.toBase58()) return json(res, 409, { error: `${item.name} is already taken.`, holder });
 
     const rec: LaunchRecord = {
       mint: mint.toBase58(),
