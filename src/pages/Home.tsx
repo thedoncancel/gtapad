@@ -5,6 +5,7 @@ import { SCENES } from "../components/Logo";
 import { CoinCard } from "../components/CoinCard";
 import { ItemArt } from "../components/ItemArt";
 import { Marquee } from "../components/Marquee";
+import { GtaCountdown } from "../components/Countdown";
 import { useLaunches } from "../data/launches";
 import { useReveal } from "../lib/reveal";
 import { num, usd } from "../lib/format";
@@ -39,8 +40,7 @@ export default function Home() {
         <div className="hero__base">
           <h1 className="hero__mark" aria-label={BRAND.name}>
             <span className="rise">GTA</span>
-            <i className="mark-dot rise rise--late" />
-            <span className="rise rise--late">PAD</span>
+            <em className="script rise rise--late">pad</em>
           </h1>
           <div className="hero__side">
             <p className="hero__eyebrow">
@@ -57,6 +57,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <GtaCountdown />
 
       <Marquee className="band" speed={1.1}>
         {BAND.map((t) => (

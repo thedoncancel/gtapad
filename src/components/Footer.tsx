@@ -32,7 +32,7 @@ export function Footer() {
         </div>
       </div>
       <div className="footer__mark" aria-hidden="true">
-        GTA<i className="mark-dot" />PAD
+        GTA<em className="script">pad</em>
       </div>
       <div className="footer__base">
         <span>© {new Date().getFullYear()} {BRAND.name}</span>

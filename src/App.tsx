@@ -53,7 +53,7 @@ function Loading({ onDone }: { onDone: () => void }) {
   return (
     <div className={`loading ${out ? "is-out" : ""}`} onClick={() => setOut(true)}>
       <div className="loading__mark">
-        <img src="/brand/plate.svg" alt={BRAND.name} />
+        <img src="/brand/palm.svg" alt={BRAND.name} />
       </div>
       <p className="loading__tip"><span>Tip</span> {tip}</p>
       <div className="loading__count">{String(n).padStart(3, "0")}</div>

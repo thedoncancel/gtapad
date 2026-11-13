@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { WalletButton } from "../wallet";
 import { BRAND, PAIR } from "../../shared/config";
 import { Logo } from "./Logo";
+import { GtaChip } from "./Countdown";
 
 export function Nav({ pairUsd }: { pairUsd: number | null }) {
   const nav = useNavigate();
@@ -22,6 +23,7 @@ export function Nav({ pairUsd }: { pairUsd: number | null }) {
         <NavLink to="/showroom">Showroom</NavLink>
         <NavLink to="/launch" className="nav__cta">Launch</NavLink>
       </nav>
+      <GtaChip />
       <form
         className="nav__search"
         onSubmit={(e) => {

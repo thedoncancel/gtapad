@@ -18,7 +18,7 @@ function config(rpc: string): PrivyClientConfig {
     appearance: {
       theme: "dark",
       accentColor: "#FF2E88",
-      logo: `${window.location.origin}/brand/plate.png`,
+      logo: `${window.location.origin}/brand/palm.png`,
       landingHeader: `Log in to ${BRAND.name}`,
       loginMessage: "Launch and trade coins paired to TTWO.",
       walletChainType: "solana-only",

@@ -420,10 +420,10 @@ textarea { resize: vertical; }
 }
 .grabs { margin-top: clamp(56px, 8vw, 100px); }
 
-/* Plate mark (option E) */
+/* Palm-sunset mark (option C) */
 .logo { display: block; height: 40px; width: auto; }
 .loading__mark { overflow: visible; padding: 0; }
-.loading__mark img { width: min(72vw, 560px); height: auto; animation: plate-in 1s var(--ease) both; filter: drop-shadow(0 30px 60px #000c); }
+.loading__mark img { height: min(56vh, 440px); width: auto; animation: plate-in 1s var(--ease) both; filter: drop-shadow(0 30px 60px #000c); }
 @keyframes plate-in { from { opacity: 0; transform: translateY(40px) rotate(-3deg) scale(0.94); } }
 .mark-dot { display: inline-block; width: 0.13em; height: 0.13em; border-radius: 50%; background: var(--pink); margin: 0 0.07em; align-self: center; transform: translateY(-0.05em); }
 .hero__mark { align-items: center; }
@@ -448,3 +448,43 @@ textarea { resize: vertical; }
 .picker__taken { position: absolute; top: 6px; left: 6px; font-style: normal; font-family: var(--mono, "Chakra Petch"), sans-serif; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; background: var(--pink, #ff2e88); color: #09070a; padding: 2px 6px; border-radius: 4px; }
 .launch__taken { margin: 0; padding: 12px 14px; border: 1px solid var(--pink, #ff2e88); border-radius: 10px; font-size: 0.9rem; }
 .launch__taken a { color: var(--pink, #ff2e88); }
+
+/* Script "pad" in the wordmarks, matching the palm logo */
+.script { font-family: "Yellowtail", var(--serif); font-style: normal; text-transform: none; color: var(--teal); letter-spacing: 0; }
+.hero__mark .script { font-size: 0.82em; margin-left: 0.03em; line-height: 1; padding-right: 0.08em; }
+.footer__mark .script { font-size: 0.86em; margin-left: 0.03em; }
+
+/* GTA VI countdown */
+.drop { position: relative; overflow: hidden; padding: clamp(64px, 10vw, 140px) var(--gutter); border-top: 1px solid var(--line); background: radial-gradient(900px 520px at 82% 70%, #ff2e8833, transparent 70%), radial-gradient(700px 420px at 12% 10%, #ffd16612, transparent 70%), var(--bg); isolation: isolate; }
+.drop__sun { position: absolute; z-index: -1; right: max(-8vw, -120px); bottom: -14vw; width: min(64vw, 820px); aspect-ratio: 1; border-radius: 50%; background: var(--sunset); opacity: 0.9; filter: saturate(1.1); animation: sun-rise 2.4s var(--ease) both; -webkit-mask: linear-gradient(#000 52%, transparent 52% 55%, #000 55% 62%, transparent 62% 66%, #000 66% 73%, transparent 73% 78%, #000 78%); mask: linear-gradient(#000 52%, transparent 52% 55%, #000 55% 62%, transparent 62% 66%, #000 66% 73%, transparent 73% 78%, #000 78%); }
+.drop__sun i { display: none; }
+.drop::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, var(--bg) 18%, #09070acc 48%, #09070a33 80%); pointer-events: none; }
+@keyframes sun-rise { from { transform: translateY(18%); opacity: 0; } }
+.drop__body { position: relative; display: grid; gap: clamp(18px, 2.4vw, 30px); max-width: 1200px; }
+.drop__eyebrow { margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: var(--hud); font-size: 0.74rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.drop__title { font-size: clamp(2.6rem, 7vw, 6.2rem); }
+.drop__title em { color: var(--gold); }
+.drop__lede { margin: 0; max-width: 560px; font-size: 1.08rem; line-height: 1.5; color: #d9d2c9; }
+.drop__cta { display: flex; gap: 10px; flex-wrap: wrap; }
+.clock { display: flex; align-items: flex-start; gap: clamp(10px, 2.2vw, 34px); }
+.clock__unit { position: relative; display: grid; justify-items: center; gap: 10px; }
+.clock__digits { display: flex; overflow: hidden; font-family: var(--display); font-size: clamp(4.4rem, 15vw, 13.5rem); line-height: 0.86; padding-top: 0.04em; background: var(--sunset); -webkit-background-clip: text; background-clip: text; color: transparent; font-variant-numeric: tabular-nums; }
+.clock__digit { display: inline-block; width: 0.5em; text-align: center; animation: digit-roll 0.7s var(--ease) both; background: inherit; -webkit-background-clip: text; background-clip: text; }
+@keyframes digit-roll { from { transform: translateY(-70%); opacity: 0; filter: blur(6px); } }
+.clock__label { font-family: var(--hud); font-weight: 600; font-size: clamp(0.62rem, 1vw, 0.78rem); letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); }
+.clock__sep { position: absolute; right: calc(clamp(10px, 2.2vw, 34px) / -2); top: 0; transform: translateX(50%); font-family: var(--display); font-size: clamp(3rem, 10vw, 9rem); line-height: 1; color: #f1ece433; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0.25; } }
+
+/* Nav chip */
+.gta-chip { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid #ff8a3d55; background: linear-gradient(90deg, #ffd16614, #ff2e8814); font-family: var(--hud); font-weight: 700; font-size: 0.74rem; letter-spacing: 0.08em; white-space: nowrap; transition: border-color 0.2s; }
+.gta-chip:hover { border-color: var(--orange); }
+.gta-chip__k { color: var(--gold); letter-spacing: 0.14em; }
+.gta-chip__v { color: var(--text); font-variant-numeric: tabular-nums; min-width: 9.5ch; }
+@media (max-width: 1250px) { .gta-chip { display: none; } }
+@media (max-width: 640px) {
+  .clock__digits { font-size: 19vw; }
+  .clock__sep { display: none; }
+  .clock { justify-content: space-between; gap: 6px; }
+  .drop__sun { width: 110vw; right: -40vw; bottom: -30vw; opacity: 0.55; }
+}
+@media (prefers-reduced-motion: reduce) { .clock__digit, .drop__sun, .clock__sep { animation: none; } }
